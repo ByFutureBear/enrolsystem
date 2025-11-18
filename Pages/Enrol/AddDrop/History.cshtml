@@ -1,0 +1,149 @@
+﻿@page
+@model OnlineEnrolmentSystem.Pages.Enrol.AddDrop.HistoryModel
+@{
+    ViewData["Title"] = "Add/Drop History";
+}
+
+<h2 class="mb-4">📜 Add/Drop History</h2>
+
+@if (Model.HistoryRecords.Any())
+{
+    <!-- Filtering section -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <input id="searchBox" type="text" class="form-control" placeholder="🔍 Search course or section..." />
+        </div>
+        <div class="col-md-4">
+            <select id="actionFilter" class="form-select">
+                <option value="">-- Filter by Action --</option>
+                <option value="Added">Added</option>
+                <option value="Dropped">Dropped</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button id="resetBtn" class="btn btn-secondary w-100">Reset</button>
+        </div>
+    </div>
+
+    <!-- Table-->
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover table-bordered align-middle" id="historyTable">
+            <thead class="table-info">
+                <tr>
+                    <th class="sortable user-select-none">Course <span class="sort-icon"></span></th>
+                    <th class="sortable user-select-none">Section <span class="sort-icon"></span></th>
+                    <th class="sortable user-select-none">Schedule <span class="sort-icon"></span></th>
+                    <th class="sortable user-select-none">Action <span class="sort-icon"></span></th>
+                    <th class="sortable user-select-none">Action Date <span class="sort-icon"></span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var record in Model.HistoryRecords)
+                {
+                    <tr>
+                        <td>@record.Class.Course.CourseCode - @record.Class.Course.CourseName</td>
+                        <td>@record.Class.Section</td>
+                        <td>@record.Class.Schedule</td>
+                        <td>
+                            @if (record.Action == "Add")
+                            {
+                                <span class="badge bg-success rounded-pill">Added</span>
+                            }
+                            else if (record.Action == "Drop")
+                            {
+                                <span class="badge bg-danger rounded-pill">Dropped</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary rounded-pill">@record.Action</span>
+                            }
+                        </td>
+                        <td data-date="@record.ActionDate.ToString("o")">@record.ActionDate.ToString("dd MMM yyyy, HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info text-center shadow-sm">
+        No add/drop history found.
+    </div>
+}
+
+@section Scripts {
+    <!-- Client-side filtering -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchBox = document.getElementById("searchBox");
+            const actionFilter = document.getElementById("actionFilter");
+            const resetBtn = document.getElementById("resetBtn");
+            const rows = document.querySelectorAll("#historyTable tbody tr");
+
+            function filterTable() {
+                const searchText = searchBox.value.toLowerCase();
+                const actionValue = actionFilter.value;
+
+                rows.forEach(row => {
+                    const courseText = row.cells[0].textContent.toLowerCase();
+                    const sectionText = row.cells[1].textContent.toLowerCase();
+                    const actionText = row.cells[3].textContent.trim();
+
+                    let matchSearch = courseText.includes(searchText) || sectionText.includes(searchText);
+                    let matchAction = !actionValue || actionText === actionValue;
+
+                    row.style.display = (matchSearch && matchAction) ? "" : "none";
+                });
+            }
+
+            searchBox.addEventListener("input", filterTable);
+            actionFilter.addEventListener("change", filterTable);
+
+            resetBtn.addEventListener("click", () => {
+                searchBox.value = "";
+                actionFilter.value = "";
+                filterTable();
+            });
+        });
+    </script>
+    <!-- Client-side sorting -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const table = document.getElementById("historyTable");
+            const headers = table.querySelectorAll("th.sortable");
+
+            headers.forEach((header, index) => {
+                let asc = true;
+                header.style.cursor = "pointer";
+
+                header.addEventListener("click", () => {
+                    const rows = Array.from(table.tBodies[0].rows);
+                    const type = header.textContent.trim();
+
+                    rows.sort((a, b) => {
+                        let valA = a.cells[index].innerText.trim();
+                        let valB = b.cells[index].innerText.trim();
+
+                        if (type.startsWith("Action Date")) {
+                            valA = new Date(a.cells[index].getAttribute("data-date"));
+                            valB = new Date(b.cells[index].getAttribute("data-date"));
+                        }
+
+                        return asc
+                            ? valA > valB ? 1 : -1
+                            : valA < valB ? 1 : -1;
+                    });
+
+                    asc = !asc; // toggle direction
+                    rows.forEach(row => table.tBodies[0].appendChild(row));
+
+                    // Reset all icons
+                    headers.forEach(h => h.querySelector(".sort-icon").textContent = "");
+                    // Set current icon
+                    header.querySelector(".sort-icon").textContent = asc ? "▲" : "▼";
+                });
+            });
+        });
+    </script>
+}

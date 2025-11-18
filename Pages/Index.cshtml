@@ -1,0 +1,57 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<h2>Welcome, @User.Identity?.Name 👋</h2>
+<p class="text-muted">This is your Online Enrolment Dashboard.</p>
+
+<!-- Quick Links -->
+<div class="row text-center pb-5">
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">📘 Enrolment</h5>
+                <p class="card-text">Register new courses</p>
+                <a asp-page="/Enrol/Index" class="btn btn-primary btn-sm">Go</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">📄 Statement</h5>
+                <p class="card-text">View your academic records</p>
+                <a asp-page="/Statement/StudentStatement" class="btn btn-primary btn-sm">Go</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">💳 Payments</h5>
+                <p class="card-text">Check fees & receipts</p>
+                <a asp-page="/Payments/Pay" class="btn btn-primary btn-sm">Go</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">⚙️ Account</h5>
+                <p class="card-text">Manage your profile</p>
+                <a asp-page="/Account/UpdateProfile" class="btn btn-primary btn-sm">Go</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Announcements -->
+<h2>Annoucement 📢</h2>
+<div class="alert alert-info mt-4">
+    📢 Enrolment for Semester 2 closes on <strong>15 Sept 2025</strong>.
+</div>
+<div class="alert alert-info mt-4">
+    📢 Do not forget to complete your Student Evaluation of Teaching by <strong>30 Sept 2025</strong>.
+</div>

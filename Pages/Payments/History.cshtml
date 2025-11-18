@@ -1,0 +1,111 @@
+﻿@page
+@model OnlineEnrolmentSystem.Pages.Payments.HistoryModel
+@{
+    ViewData["Title"] = "Payment History";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body">
+            <h3 class="card-title mb-4 text-center">💳 Payment History</h3>
+
+            <!-- Search & Filter -->
+            <form method="get" class="row g-3 align-items-end mb-4">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Search</label>
+                    <input type="text" name="Search" value="@Model.Search" 
+                           class="form-control" placeholder="Invoice number or description" />
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Status</label>
+                    <select name="Status" class="form-select">
+                        <option value="">All</option>
+                        <option value="Paid" selected="@(Model.Status == "Paid")">Paid</option>
+                        <option value="Pending" selected="@(Model.Status == "Pending")">Pending</option>
+                        <option value="Failed" selected="@(Model.Status == "Failed")">Failed</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Start Date</label>
+                    <input type="date" name="StartDate" value="@(Model.StartDate?.ToString("yyyy-MM-dd") ?? "")" class="form-control" />
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">End Date</label>
+                    <input type="date" name="EndDate" value="@(Model.EndDate?.ToString("yyyy-MM-dd") ?? "")" class="form-control" />
+                </div>
+
+                <div class="col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100 text-nowrap">🔍 Search</button>
+                    <a asp-page="./History"
+                       asp-route-Search="@Model.Search"
+                       asp-route-Status="@Model.Status"
+                       asp-route-StartDate="@(Model.StartDate?.ToString("yyyy-MM-dd"))"
+                       asp-route-EndDate="@(Model.EndDate?.ToString("yyyy-MM-dd"))"
+                       asp-route-export="true"
+                       class="btn btn-success w-100 text-nowrap"
+                       role="button">Export CSV</a>
+                </div>
+            </form>
+
+            <!-- Payment History Table -->
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>No.</th>
+                            <th>Description</th>
+                            <th>Amount (RM)</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                            <th>Receipt</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Payments.Any())
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">No records found</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var p in Model.Payments)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@p.PaymentId</td>
+                                    <td>@p.Description</td>
+                                    <td class="fw-bold">@p.Amount.ToString("F2")</td>
+                                    <td>@p.PaymentMethod</td>
+                                    <td>
+                                        @if (p.Status == "Paid")
+                                        {
+                                            <span class="badge bg-success rounded-pill">Paid</span>
+                                        }
+                                        else if (p.Status == "Pending")
+                                        {
+                                            <span class="badge bg-warning text-dark rounded-pill">Pending</span>
+                                        }
+                                        else if (p.Status == "Failed")
+                                        {
+                                            <span class="badge bg-danger rounded-pill">Failed</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary rounded-pill">@p.Status</span>
+                                        }
+                                    </td>
+                                    <td>@(string.IsNullOrEmpty(p.ReceiptNumber) ? "-" : p.ReceiptNumber)</td>
+                                    <td>@p.PaymentDate.ToString("dd MMM yyyy, HH:mm")</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

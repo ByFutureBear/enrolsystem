@@ -1,0 +1,55 @@
+﻿@page
+@model OnlineEnrolmentSystem.Pages.Account.UpdateBankDetailsModel
+@{
+    ViewData["Title"] = "Update Bank Details";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+
+            @if (Model.StatusMessage is not null && !string.IsNullOrWhiteSpace(Model.StatusMessage))
+            {
+                <div class="alert alert-success">@Model.StatusMessage</div>
+            }
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-info text-white text-center">
+                    <h4 class="mb-0">Update Bank Details</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" class="needs-validation" novalidate>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.BankName" class="form-label"></label>
+                            <input asp-for="Input.BankName" class="form-control" />
+                            <span asp-validation-for="Input.BankName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.BankAccountNumber" class="form-label"></label>
+                            <input asp-for="Input.BankAccountNumber" class="form-control" />
+                            <span asp-validation-for="Input.BankAccountNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.BankHolderName" class="form-label"></label>
+                            <input asp-for="Input.BankHolderName" class="form-control" />
+                            <span asp-validation-for="Input.BankHolderName" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-page="/Index" class="btn btn-outline-secondary px-4">Back</a>
+                            <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="_ValidationScriptsPartial" />

@@ -1,0 +1,26 @@
+﻿@page "{statusCode?}"
+@model ErrorModel
+@{
+    Layout = "_LoginLayout";
+    var code = Model.StatusCode ?? 500;
+    ViewData["Title"] = $"Error {code}";
+}
+
+<div class="d-flex align-items-center justify-content-center vh-100 bg-light">
+    <div class="text-center">
+        <h1 class="display-1 fw-bold text-danger">@code</h1>
+
+        @if (code == 404)
+        {
+            <h2 class="mb-3">Page Not Found</h2>
+            <p class="lead">Sorry, the page you are looking for does not exist or has been moved.</p>
+        }
+        else
+        {
+            <h2 class="mb-3">Something Went Wrong</h2>
+            <p class="lead">An unexpected error occurred. Please try again later.</p>
+        }
+
+        <a href="/" class="btn btn-primary mt-3">Go Back Home</a>
+    </div>
+</div>

@@ -1,0 +1,101 @@
+﻿@page
+@model OnlineEnrolmentSystem.Pages.Enrol.IndexModel
+@{
+    ViewData["Title"] = "Enrolment";
+}
+
+<div class="container my-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+
+            <!-- Page Header -->
+            <div class="text-center mb-4">
+                <h2 class="fw-bold text-primary">📚 Course Enrolment</h2>
+                <p class="text-muted">Select from available classes and manage your enrolments.</p>
+            </div>
+
+            <!-- Show validation errors -->
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <!-- Enrolment Form -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Enrol in a Class</h5>
+                    <form method="post" asp-page-handler="Enrol">
+                        <div class="mb-3">
+                            <label for="SelectedClassId" class="form-label">Available Classes</label>
+                            <select asp-for="SelectedClassId" class="form-select">
+                                <option value="">-- Select a class --</option>
+                                @foreach (var c in Model.AvailableClasses)
+                                {
+                                    <option value="@c.ClassId">
+                                        @c.Course.CourseCode - @c.Course.CourseName
+                                        (Section: @c.Section | Cap: @c.Capacity | @c.Schedule)
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            ✅ Enrol
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- My Enrolments -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">📖 My Current Enrolments</h5>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Course</th>
+                                    <th>Section</th>
+                                    <th>Schedule</th>
+                                    <th>Status</th>
+                                    <th>Enroled At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.MyEnrolments.Any())
+                                {
+                                    @foreach (var e in Model.MyEnrolments)
+                                    {
+                                        <tr>
+                                            <td class="fw-semibold">@e.Class.Course.CourseCode - @e.Class.Course.CourseName</td>
+                                            <td>@e.Class.Section</td>
+                                            <td>@e.Class.Schedule</td>
+                                            <td>
+                                                @switch (@e.Status)
+                                                {
+                                                    case "Enroled":
+                                                        <span class="badge rounded-pill bg-primary">Enroled</span>
+                                                        break;
+                                                    case "Completed":
+                                                        <span class="badge rounded-pill bg-success">Completed</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>@e.EnrolmentDate.ToString("dd MMM yyyy, HH:mm")</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            You are not enroled in any classes.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

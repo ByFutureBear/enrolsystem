@@ -1,0 +1,87 @@
+﻿@page
+@model OnlineEnrolmentSystem.Pages.Payments.InvoiceModel
+@{
+    ViewData["Title"] = "Invoice";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body">
+            <h3 class="card-title mb-4 text-center">📑 My Invoices</h3>
+
+            @if (!Model.Invoices.Any())
+            {
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-info-circle"></i> No invoices found.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Invoice #</th>
+                                <th>Issue Date</th>
+                                <th>Due Date</th>
+                                <th>Total (RM)</th>
+                                <th>Adjustment (RM)</th>
+                                <th>Net Amount (RM)</th>
+                                <th>Status</th>
+                                <th>Description</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var invoice in Model.Invoices)
+                            {
+                                var netAmount = invoice.TotalAmount - invoice.Adjustment;
+
+                                <tr>
+                                    <td><span class="fw-semibold">@invoice.InvoiceNumber</span></td>
+                                    <td>@invoice.IssueDate.ToString("dd MMM yyyy")</td>
+                                    <td>@invoice.DueDate.ToString("dd MMM yyyy")</td>
+                                    <td>@invoice.TotalAmount.ToString("F2")</td>
+                                    <td>@(invoice.Adjustment == 0 ? "-" : invoice.Adjustment.ToString("F2"))</td>
+                                    <td class="fw-bold">@netAmount.ToString("F2")</td>
+                                    <td>
+                                        @if (invoice.Status == "Paid")
+                                        {
+                                            <span class="badge bg-success rounded-pill">Paid</span>
+                                        }
+                                        else if (invoice.Status == "Pending")
+                                        {
+                                            <span class="badge bg-warning text-dark rounded-pill">Pending</span>
+                                        }
+                                        else if (invoice.Status == "Overdue")
+                                        {
+                                            <span class="badge bg-danger rounded-pill">Overdue</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary rounded-pill">@invoice.Status</span>
+                                        }
+                                    </td>
+                                    <td>@invoice.Description</td>
+                                    <td class="text-center">
+                                        @if (invoice.Status != "Paid")
+                                        {
+                                            <a asp-page="/Payments/Pay" asp-route-invoiceId="@invoice.InvoiceId"
+                                               class="btn btn-outline-primary btn-sm px-3">
+                                                Pay
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">—</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

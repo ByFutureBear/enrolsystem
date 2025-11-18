@@ -1,0 +1,75 @@
+﻿@page
+@model OnlineEnrolmentSystem.Pages.LoginModel
+@{
+    Layout = "_LoginLayout";
+    ViewData["Title"] = "Login";
+}
+
+<div class="d-flex justify-content-center align-items-center vh-100 bg-light p-2">
+    <div class="card shadow-lg p-4" style="width: 400px; border-radius: 15px;">
+        <div class="card-body">
+            <h3 class="card-title text-center mb-4">🔐 Student Login</h3>
+
+            @if (TempData["StatusMessage"] is string status && !string.IsNullOrWhiteSpace(status))
+            {
+                <div class="alert alert-success">@status</div>
+            }
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger p-2" role="alert"></div>
+
+            <form method="post">
+                <!-- Email -->
+                <div class="form-group mb-3">
+                    <label asp-for="Input.Email" class="form-label fw-bold"></label>
+                    <input asp-for="Input.Email" class="form-control" placeholder="Enter your email" />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+
+                <!-- Password -->
+                <div class="form-group mb-4">
+                    <label asp-for="Input.Password" class="form-label fw-bold"></label>
+                    <div class="input-group">
+                        <input asp-for="Input.Password" type="password" autocomplete="current-password" class="form-control" placeholder="Enter your password" />
+                        <button type="button"
+                                class="btn btn-outline-secondary toggle-password"
+                                data-target="Input_Password"
+                                aria-label="Show password">
+                            <span class="eye-open" aria-hidden="true">👁️</span>
+                            <span class="eye-closed d-none" aria-hidden="true">🙈</span>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mb-2">Login</button>
+
+                <div class="text-center">
+                    <small>
+                        <a asp-page="/ForgotPassword" class="text-decoration-none">Forgot Password?</a>
+                    </small>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.toggle-password').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const targetId = btn.getAttribute('data-target');
+                    const input = document.getElementById(targetId);
+                    if (!input) return;
+                    const show = input.type === 'password';
+                    input.type = show ? 'text' : 'password';
+                    btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+                    btn.querySelector('.eye-open').classList.toggle('d-none', show);
+                    btn.querySelector('.eye-closed').classList.toggle('d-none', !show);
+                });
+            });
+        });
+    </script>
+}
+
+<partial name="_ValidationScriptsPartial" />

@@ -1,0 +1,151 @@
+﻿@page
+@model OnlineEnrolmentSystem.Pages.Payments.PayModel
+@{
+    ViewData["Title"] = "Payment";
+}
+<div class="d-flex justify-content-center align-items-center py-5">
+    <div class="card shadow-lg p-4 w-100" style="max-width: 600px; border-radius: 15px;">
+        <div class="card-body">
+            <h3 class="card-title text-center mb-4">💳 Make Payment</h3>
+
+            <!-- Status Messages -->
+            @if (TempData["PaymentSuccess"] != null)
+            {
+                <div class="alert alert-success text-center">@TempData["PaymentSuccess"]</div>
+            }
+
+            @if (Model.Invoice == null)
+            {
+                <div class="alert alert-success text-center">✅ No outstanding payment right now!</div>
+            }
+            else if (Model.Outstanding <= 0)
+            {
+                <div class="alert alert-info text-center">
+                    This invoice (<strong>@Model.Invoice.InvoiceNumber</strong>) has already been settled.
+                </div>
+            }
+            else
+            {
+                <!-- Invoice Information -->
+                <div class="card bg-light border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">📄 Invoice Details</h5>
+                        <p><strong>Invoice No:</strong> @Model.Invoice.InvoiceNumber</p>
+                        <p><strong>Student:</strong> @Model.Invoice.Student.Name</p>
+                        <p><strong>Total Amount:</strong> @Model.Invoice.TotalAmount.ToString("C")</p>
+                        <p><strong>Adjustment:</strong> @(Model.Invoice.Adjustment == 0 ? "-" : Model.Invoice.Adjustment.ToString("C"))</p>
+                        <p><strong>Outstanding:</strong> <span class="fw-bold text-danger">@Model.Outstanding.ToString("C")</span></p>
+                    </div>
+                </div>
+
+                <!-- Payment Form -->
+                <form method="post">
+                    <input type="hidden" name="invoiceId" value="@Model.Invoice.InvoiceId" />
+
+                    <!-- Payment Method -->
+                    <div class="mb-3">
+                        <label asp-for="Payment.PaymentMethod" class="form-label fw-bold">Payment Method</label>
+                        <select asp-for="Payment.PaymentMethod" class="form-select" onchange="toggleFields(this.value)" required>
+                            <option value="">-- Select Method --</option>
+                            <option value="CreditCard">💳 Credit Card</option>
+                            <option value="OnlineBanking">🏦 Bank Transfer</option>
+                            <option value="Ewallet">📱 E-Wallet</option>
+                        </select>
+                        <span asp-validation-for="Payment.PaymentMethod" class="text-danger"></span>
+                    </div>
+
+                    <!-- Card Fields -->
+                    <div id="card-fields" style="display:none;">
+                        <div class="mb-3">
+                            <label asp-for="Payment.CardName" class="form-label fw-bold"></label>
+                            <input asp-for="Payment.CardName" class="form-control" />
+                            <span asp-validation-for="Payment.CardName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Payment.CardNumber" class="form-label fw-bold"></label>
+                            <input asp-for="Payment.CardNumber" class="form-control" maxlength="16" pattern="^\d{16}$" placeholder="1234567890123456" />
+                            <span asp-validation-for="Payment.CardNumber" class="text-danger"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Payment.CardExpiry" class="form-label fw-bold"></label>
+                                <input asp-for="Payment.CardExpiry" class="form-control" placeholder="MM/YY" pattern="^(0[1-9]|1[0-2])\/\d{2}$" />
+                                <span asp-validation-for="Payment.CardExpiry" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Payment.CardCVV" class="form-label fw-bold"></label>
+                                <input asp-for="Payment.CardCVV" class="form-control" maxlength="4" pattern="^\d{3,4}$" placeholder="123" />
+                                <span asp-validation-for="Payment.CardCVV" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bank Fields -->
+                    <div id="bank-fields" style="display:none;">
+                        <div class="mb-3">
+                            <label asp-for="Payment.BankAccount" class="form-label fw-bold"></label>
+                            <input asp-for="Payment.BankAccount" class="form-control" pattern="^\d{6,20}$" placeholder="Enter your bank account number" />
+                            <span asp-validation-for="Payment.BankAccount" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Ewallet Fields -->
+                    <div id="ewallet-fields" style="display:none;">
+                        <div class="mb-3">
+                            <label asp-for="Payment.EwalletProvider" class="form-label fw-bold"></label>
+                            <select asp-for="Payment.EwalletProvider" class="form-select">
+                                <option value="">-- Select E-Wallet --</option>
+                                <option value="TNG">Touch 'n Go (TNG)</option>
+                                <option value="Boost">Boost</option>
+                                <option value="GrabPay">GrabPay</option>
+                            </select>
+                            <span asp-validation-for="Payment.EwalletProvider" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-success w-100">💰 Pay Now</button>
+                        <a asp-page="/Index" class="btn btn-outline-secondary w-100">Cancel</a>
+                    </div>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleFields(method) {
+            // Hide all fields first
+            document.getElementById("card-fields").style.display = "none";
+            document.getElementById("bank-fields").style.display = "none";
+            document.getElementById("ewallet-fields").style.display = "none";
+
+            // Remove all required attributes
+            document.querySelectorAll("#card-fields input, #bank-fields input, #ewallet-fields select")
+                .forEach(el => el.removeAttribute("required"));
+
+            // Show + set required only for chosen method
+            if (method === "CreditCard") {
+                document.getElementById("card-fields").style.display = "block";
+                document.querySelectorAll("#card-fields input").forEach(el => el.setAttribute("required", "required"));
+            }
+            else if (method === "OnlineBanking") {
+                document.getElementById("bank-fields").style.display = "block";
+                document.querySelector("#bank-fields input").setAttribute("required", "required");
+            }
+            else if (method === "Ewallet") {
+                document.getElementById("ewallet-fields").style.display = "block";
+                document.querySelector("#ewallet-fields select").setAttribute("required", "required");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const current = document.querySelector("[name='Payment.PaymentMethod']").value;
+            if (current) {
+                toggleFields(current);
+            }
+        });
+    </script>
+}

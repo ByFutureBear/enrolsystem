@@ -1,0 +1,155 @@
+﻿@{
+    var currentPage = (ViewContext.RouteData.Values["page"]?.ToString() ?? "").ToLowerInvariant();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - OnlineEnrolmentSystem</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/OnlineEnrolmentSystem.styles.css" asp-append-version="true" />
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <header>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container-fluid">
+                <!-- Brand / Logo -->
+                <a class="navbar-brand fw-bold" asp-page="/Index">Online Enrolment System</a>
+
+                <!-- Mobile Toggle -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Navbar links -->
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                        <!-- Home -->
+                        <li class="nav-item">
+                            <a class="nav-link @(currentPage == "/index" ? "active" : "")" asp-page="/Index"
+                               aria-current="@(currentPage == "/index" ? "page" : null)">Home</a>
+                        </li>
+
+
+                        <!-- Online Enrolment -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle @(currentPage.StartsWith("/enrol/index") ? "active" : "")" href="#" id="EnrolmentDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                Online Enrolment
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="EnrolmentDropdown">
+                                <li>
+                                    <a class="dropdown-item @(currentPage == "/enrol/index" ? "active" : "")"
+                                       asp-page="/Enrol/Index"
+                                       aria-current="@(currentPage == "/enrol/index" ? "page" : null)">
+                                        Course Enrolment
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Add/Drop -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle @(currentPage.StartsWith("/enrol/adddrop") ? "active" : "")" href="#" id="addDropDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                Add/Drop
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="addDropDropdown">
+                                <li>
+                                    <a class="dropdown-item @(currentPage == "/enrol/adddrop/index" ? "active" : "")"
+                                       asp-page="/Enrol/AddDrop/Index">Course Add/Drop</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item @(currentPage == "/enrol/adddrop/history" ? "active" : "")"
+                                       asp-page="/Enrol/AddDrop/History">Add/Drop History</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Enquiry -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle @(currentPage.StartsWith("/enquiry") ? "active" : "")" href="#" id="enquiryDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                Enquiry
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="enquiryDropdown">
+                                <li><a class="dropdown-item @(currentPage == "/enquiry/contactus" ? "active" : "")" asp-page="/Enquiry/ContactUs">Contact Us</a></li>
+                                <li><a class="dropdown-item @(currentPage == "/enquiry/timetablematching" ? "active" : "")" asp-page="/Enquiry/TimetableMatching">Timetable Matching</a></li>
+                                <li><a class="dropdown-item @(currentPage == "/enquiry/evaluation" ? "active" : "")" asp-page="/Enquiry/Evaluation">Student Evaluation of Teaching</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Statement -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle @(currentPage.StartsWith("/statement") ? "active" : "")" href="#" id="statementDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                Statement
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="statementDropdown">
+                                <li><a class="dropdown-item @(currentPage == "/statement/studentstatement" ? "active" : "")" asp-page="/Statement/StudentStatement">Student Statement</a></li>
+                                <li><a class="dropdown-item @(currentPage == "/statement/registrationsummary" ? "active" : "")" asp-page="/Statement/RegistrationSummary">Registration Summary / Timetable</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Payment -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle @(currentPage.StartsWith("/payments") ? "active" : "")" href="#" id="paymentDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                Payment
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="paymentDropdown">
+                                <li><a class="dropdown-item @(currentPage == "/payments/pay" ? "active" : "")" asp-page="/Payments/Pay">Payment</a></li>
+                                <li><a class="dropdown-item @(currentPage == "/payments/history" ? "active" : "")" asp-page="/Payments/History">Online Payment History / Receipt</a></li>
+                                <li><a class="dropdown-item @(currentPage == "/payments/invoice" ? "active" : "")" asp-page="/Payments/Invoice">Invoice & Adjustment Note</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Account -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle @(currentPage.StartsWith("/account") && currentPage != "/account/login" ? "active" : "")" href="#" id="accountDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                Account
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="accountDropdown">
+                                <li><a class="dropdown-item @(currentPage == "/account/updateprofile" ? "active" : "")" asp-page="/Account/UpdateProfile">Update Profile</a></li>
+                                <li><a class="dropdown-item @(currentPage == "/account/changepassword" ? "active" : "")" asp-page="/Account/ChangePassword">Change Password</a></li>
+                                <li><a class="dropdown-item @(currentPage == "/account/updatebankdetails" ? "active" : "")" asp-page="/Account/UpdateBankDetails">Update Bank Details</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <!-- Right side -->
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <form method="post" action="/logout" class="d-inline">
+                                <button type="submit" class="btn btn-link nav-link">Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Page Content -->
+    <div class="flex-fill container mt-4">
+        @RenderBody()
+    </div>
+
+    <footer class="text-center py-3 border-top mt-5 bg-light">
+        <small>&copy; @DateTime.Now.Year Group 1 - Online Enrolment System</small>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
